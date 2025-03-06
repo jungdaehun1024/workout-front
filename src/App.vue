@@ -1,8 +1,12 @@
 <template>
-   <h1>운동 커뮤니티</h1>
+
+   <NavBar/>
+ <RouterView/>
 </template>
 
 <script setup>
+import NavBar from './components/NavBar.vue';
+
 
 </script>
 
