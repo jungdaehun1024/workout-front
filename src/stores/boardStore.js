@@ -7,7 +7,7 @@ export const useBoardStore  = defineStore("board",()=>{
     //State 
     const boards = ref([]);
     const boardDetail = ref({});
-   
+    
 
     //Action
 
