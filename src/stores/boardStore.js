@@ -5,9 +5,9 @@ import { ref } from 'vue'
 export const useBoardStore  = defineStore("board",()=>{
 
     //State 
-    const boards = ref([]);
-    const boardDetail = ref({});
-    
+
+    const boards = ref([]); //게시글 목록
+    const boardDetail = ref({}); // 게시글 상세 정보
 
     //Action
 
@@ -16,7 +16,6 @@ export const useBoardStore  = defineStore("board",()=>{
         try{
             const response = await axios.get("/api/getBoards"); // 게시글 목록 가져오기
             boards.value = response.data;
-            console.log(boards.value);
         }catch(err){
             console.error(err.message);
         }
@@ -31,5 +30,6 @@ export const useBoardStore  = defineStore("board",()=>{
             console.error(err.message);
         }
     }
-    return {boardDetail,boards, getBoardDetail,getBoards}
+
+    return {boardDetail,boards,getBoardDetail,getBoards}
 })
