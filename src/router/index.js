@@ -4,6 +4,7 @@ import WriteView  from "@/views/board/WriteView.vue";
 import BoardView from  "@/views/board/BoardView.vue";
 import BoardDetailView from "@/views/board/BoardDetailView.vue";
 import { useBoardStore } from "@/stores/boardStore";
+import ModifyView from "@/views/board/ModifyView.vue";
 
 const routes = [
     {
@@ -31,6 +32,10 @@ const routes = [
             next();
         },
         component: BoardDetailView,
+    },{
+        path: "/board/modify",
+        name:"Modify",
+        component: ModifyView,
     }
 
 ];
