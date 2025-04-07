@@ -6,7 +6,7 @@
   <script setup>
 import PostForm from '@/components/PostForm.vue';
 import { useBoardStore } from '@/stores/boardStore';
-import { onBeforeMount, onMounted } from 'vue';
+import { onBeforeMount } from 'vue';
 const boardStore = useBoardStore();
 onBeforeMount(()=>{
   //세션에 저장된 게시글 상세 정보 초기화
@@ -16,9 +16,7 @@ onBeforeMount(()=>{
   Object.assign(boardStore.boardDetail, { data: {} });
 
 })
-onMounted(()=>{
-  
-})
+
   </script>
    
   <style lang="scss" scoped>

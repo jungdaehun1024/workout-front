@@ -87,7 +87,7 @@
         }
     }
 </script>
-<style>
+<style lang="scss" scoped>
     .form-container {
     display: flex;
     flex-direction: column;
