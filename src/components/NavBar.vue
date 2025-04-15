@@ -5,19 +5,19 @@
                 <RouterLink to="/">홈</RouterLink>
             </li>
             <li>
-                <RouterLink to="/board/write"  v-if="isLogin" >글 쓰기 </RouterLink>
+                <RouterLink to="/board/write" >글 쓰기 </RouterLink>
             </li>
             <li>
-                <RouterLink to="/board" v-if="isLogin" >커뮤니티</RouterLink>
+                <RouterLink to="/board"  >커뮤니티</RouterLink>
             </li>
             <li>
-                <RouterLink to="/auth/join" v-if="!isLogin" >회원가입</RouterLink>
+                <RouterLink to="/auth/join"  >회원가입</RouterLink>
             </li>
             <li>
-                <RouterLink to="/auth/login" v-if="!isLogin">로그인</RouterLink>
+                <RouterLink to="/auth/login" >로그인</RouterLink>
             </li>
             <li>
-                <button @click="logout" v-if="isLogin">로그아웃</button>
+                <button @click="logout" >로그아웃</button>
             </li>
         </ul>
     </nav>
