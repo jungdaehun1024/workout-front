@@ -9,6 +9,18 @@
           <label for="content">글 내용</label>
           <textarea v-model="content" id="content" class="form-textarea" ></textarea>
         </div>
+        
+        <div class="form-group">
+          <label for="file" class="custom-addFile-btn">파일 첨부</label>
+          <input type="file" id="file" class="form-input" multiple @change="handleFileUpload" style="display: none;">
+        </div>
+        <div class="form-group" v-if="files.length">
+          <label for="fileList"> 첨부파일 목록</label>
+          <p class="fileList" v-for="(file,idx) in files" :key="idx">
+              {{ file.name }}
+              <button @click="deleteFile(idx)">X</button>
+          </p>
+        </div>
   
         <div class="form-actions">
           <button class="submit-button" @click="saveBoard">저장</button>
@@ -26,6 +38,7 @@
     // Input태그에 입력과 양방향 통신
     const title = ref("");  
     const content = ref(""); 
+    const files = ref([]);
 
     const router = useRouter();
     const boardStore = useBoardStore();
@@ -48,13 +61,23 @@
     //게시글 생성
     const createBoard = async() =>{
         try {
-             await axios.post("/api/createBoard",{
-                title: title.value,
-                content: content.value
-              });
+             const formData = new FormData();
+             formData.append("title",title.value);
+             formData.append("content",content.value);
+             files.value.forEach((file)=>{
+                formData.append("attachmentFiles",file);
+             })
+             await axios.post("/api/createBoard",formData,{
+              headers:{
+                "Content-Type" : "multipart/form-data",
+              },
+              withCredentials:true
+             });
+
+             alert("게시글이 작성에 성공했습니다.");
             router.push("/board");
         } catch (err) {
-            console.err(err.message);
+            console.error(err.message);
           }
         }
 
@@ -86,14 +109,36 @@
             createBoard();
         }
     }
+
+    //첨부 파일을 받는 함수 
+    const handleFileUpload = (event)=>{
+        const selectedFiles = event.target.files; // 파일 리스트
+        files.value = [...files.value , ...Array.from(selectedFiles)];  // 기존 배열에 새 파일들 추가.
+        console.log(files.value);
+    }
+
+    //첨부파일 삭제 함수
+    const deleteFile = (idx)=>{
+      files.value.splice(idx,1);
+    }
 </script>
 <style lang="scss" scoped>
     .form-container {
     display: flex;
     flex-direction: column;
     gap: 20px;
+
+
   }
-  
+
+  .custom-addFile-btn{
+      cursor: pointer;
+      background-color:  #4CAF50;
+      border-radius: 4px;
+      width: 5vw;
+      color: black;
+  }
+
   .form-group {
     display: flex;
     flex-direction: column;

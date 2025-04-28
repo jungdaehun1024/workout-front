@@ -4,6 +4,7 @@
             <div class ="boardFlexContent">
                 <div class="boardTitle">제목:{{boardDetail.data.title}}</div>
                 <div class="boardId">게시글 ID:{{boardDetail.data.boardId}}</div>
+                
             </div>
             <div class="boardContent">내용:{{boardDetail.data.content}} {{ backBoardList }}</div>
             <div class =btns>
@@ -11,8 +12,17 @@
                 <button @click="delBoard(boardDetail.data.boardId)">삭제</button>
                 <button @click="mvBoardList">목록으로</button>
             </div>
-          
-            
+
+          <div class="form-group">
+          <label for="fileList"> 첨부파일 목록</label>
+          <li v-for="(file,idx) in boardDetail.data.attachments" :key="idx">
+            <a :href="`/api/files/download?attachmentPath=${encodeURIComponent(file.attachmentPath)}&attachmentName=${encodeURIComponent(file.attachmentName)}`" download>
+               {{ file.attachmentName }}
+            </a>
+          </li>
+        </div>
+    
+  
         </div>
      
     </div>
