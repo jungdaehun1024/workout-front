@@ -14,11 +14,18 @@
           <label for="file" class="custom-addFile-btn">파일 첨부</label>
           <input type="file" id="file" class="form-input" multiple @change="handleFileUpload" style="display: none;">
         </div>
-        <div class="form-group" v-if="files.length">
+        <div class="form-group" v-if="files.length" >
           <label for="fileList"> 첨부파일 목록</label>
           <p class="fileList" v-for="(file,idx) in files" :key="idx">
               {{ file.name }}
               <button @click="deleteFile(idx)">X</button>
+          </p>
+        </div>
+        <div class="form-group" v-if="existFiles.length>0" >
+          <label for="fileList"> 기존 첨부파일 목록</label>
+          <p class="fileList" v-for="(file,idx) in existFiles" :key="idx">
+              {{ file.attachmentName }}
+              <button @click="deleteExistFile(file,idx)">X</button>
           </p>
         </div>
   
@@ -38,7 +45,9 @@
     // Input태그에 입력과 양방향 통신
     const title = ref("");  
     const content = ref(""); 
-    const files = ref([]);
+    const files = ref([]); // 새로 첨부하는 파일 
+    const existFiles = ref([]); // 기존해 존재했던 파일 (게시글 상세보기에 표시)
+    const deleteReqFiles =ref([]); // 상세보기에서 x누르면 첨부파일 고유번호 저장 후 삭제 요청
 
     const router = useRouter();
     const boardStore = useBoardStore();
@@ -52,11 +61,21 @@
         if(getBoardDetail){
             title.value = getBoardDetail?.title ;
             content.value = getBoardDetail?.content ;
+
+            //게시글 생성할 때 저장됐던 파일의 정보
+            existFiles.value = getBoardDetail?.attachments.map((item)=>({
+              attachmentId : item.attachmentId,
+              attachmentMIME:  item.attachmentMIME,
+              attachmentName: item.attachmentName,
+              attachmentPath: item.attachmentPath,
+              boardId : item.boardId,
+            }));      
         }else {
             title.value = "";
             content.value = "";
         }
     });
+
 
     //게시글 생성
     const createBoard = async() =>{
@@ -84,11 +103,22 @@
     //게시글 수정
     const modifyBoard = async()=>{
         try{
-            await axios.put(`/api/updateBoard`,{
-                title: title.value,
-                content: content.value,
-                boardId : boardDetail.value.data.boardId 
-            })
+            const formData = new FormData();
+            console.log(boardDetail.value.data);
+            formData.append("boardId",boardDetail.value.data.boardId);
+            formData.append("title",title.value);
+            formData.append("content",content.value);
+            formData.append("deleteAttachmentsList",JSON.stringify(deleteReqFiles.value));
+            files.value.forEach((file)=>{
+                formData.append("attachmentFiles",file);
+             });
+
+            await axios.put(`/api/updateBoard`,formData,{
+              headers:{
+                "Content-Type" : "multipart/form-data",
+              },
+              withCredentials:true,
+            });
             sessionStorage.clear(); // 수정 완료되면 세션 비우기
             
             // 기존 boardDetail 객체를 유지하면서 내부 값만 초기화
@@ -96,7 +126,7 @@
             Object.assign(boardDetail.value, { data: {} });
             router.push("/board");
         }catch(err){
-            console.err(err.message);
+            console.error(err.message);
         }
     }
 
@@ -110,16 +140,36 @@
         }
     }
 
-    //첨부 파일을 받는 함수 
+    //첨부 파일을 다루는 함수 
     const handleFileUpload = (event)=>{
-        const selectedFiles = event.target.files; // 파일 리스트
-        files.value = [...files.value , ...Array.from(selectedFiles)];  // 기존 배열에 새 파일들 추가.
-        console.log(files.value);
+      const selectedFiles = event.target.files; // 파일 리스트
+      files.value = [...files.value , ...Array.from(selectedFiles)];  // 기존 배열에 새 파일들 추가.
+    
     }
 
+    
+    
+      
     //첨부파일 삭제 함수
     const deleteFile = (idx)=>{
       files.value.splice(idx,1);
+    }
+
+    const deleteExistFile =(file,idx)=>{
+      existFiles.value.splice(idx,1);
+
+      // 삭제 대상 목록에 추가
+    deleteReqFiles.value = [
+      ...deleteReqFiles.value,
+      {
+        attachmentId: file.attachmentId,
+        attachmentPath: file.attachmentPath,
+        attachmentName: file.attachmentName,
+      }
+    ];
+      console.log("삭제되는 기존 파일 정보");
+      console.log(deleteReqFiles.value);
+
     }
 </script>
 <style lang="scss" scoped>

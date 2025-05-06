@@ -16,9 +16,7 @@
           <div class="form-group">
           <label for="fileList"> 첨부파일 목록</label>
           <li v-for="(file,idx) in boardDetail.data.attachments" :key="idx">
-            <a :href="`/api/files/download?attachmentPath=${encodeURIComponent(file.attachmentPath)}&attachmentName=${encodeURIComponent(file.attachmentName)}`" download>
-               {{ file.attachmentName }}
-            </a>
+            <button @click="downloadFile(file)">{{file.attachmentName}}</button>
           </li>
         </div>
     
@@ -54,9 +52,21 @@ const delBoard = async(boardId)=>{
 
 //수정 페이지로 이동
 const pushBoardId = ()=>{
-  //세션스토리지에 게시글 상세정보 저장
   sessionStorage.setItem("boardDetail",JSON.stringify(boardDetail));
   router.push("/board/modify");
+}
+
+//첨부파일을 다운로드
+const downloadFile = (file)=>{
+  const url = `/api/files/download?attachmentPath=${encodeURIComponent(file.attachmentPath)}&attachmentName=${encodeURIComponent(file.attachmentName)}`;
+  
+  //a태그를 동적으로 생성
+  const link = document.createElement('a');
+  link.href = url;
+  link.download=''; // 클릭 시 이동이 아닌 다운로드
+  document.body.append(link); // 
+  link.click();
+  document.body.removeChild(link);
 }
 
 </script>
