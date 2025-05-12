@@ -26,7 +26,7 @@
     </div>
 </template>
 <script setup>
-import { useBoardStore } from '@/stores/boardStore';
+import { useBoardStore } from '@/stores/board/boardStore';
 import axios from 'axios';
 import { storeToRefs } from 'pinia';
 import {  useRouter } from 'vue-router';

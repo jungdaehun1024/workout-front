@@ -39,7 +39,7 @@
  import { onMounted, ref } from 'vue';
     import axios from 'axios';
     import { useRouter } from 'vue-router';
-    import { useBoardStore } from '@/stores/boardStore';
+    import { useBoardStore } from '@/stores/board/boardStore';
     import { storeToRefs } from 'pinia';
 
     // Input태그에 입력과 양방향 통신

@@ -13,7 +13,7 @@
     // import axios from 'axios';
     import {  onBeforeMount} from 'vue';
     import { useRouter } from 'vue-router';
-    import {useBoardStore} from '@/stores/boardStore';
+    import {useBoardStore} from '@/stores/board/boardStore';
     import { storeToRefs } from 'pinia';
 
     const router = useRouter();

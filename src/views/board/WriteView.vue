@@ -5,7 +5,7 @@
   </template>
   <script setup>
 import PostForm from '@/components/PostForm.vue';
-import { useBoardStore } from '@/stores/boardStore';
+import { useBoardStore } from '@/stores/board/boardStore';
 import { onBeforeMount } from 'vue';
 const boardStore = useBoardStore();
 onBeforeMount(()=>{
