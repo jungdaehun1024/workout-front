@@ -17,6 +17,9 @@
                 <RouterLink to="/auth/login" >로그인</RouterLink>
             </li>
             <li>
+                <RouterLink to="/auth/user/myPage" >내 정보</RouterLink>
+            </li>
+            <li>
                 <button @click="logout" >로그아웃</button>
             </li>
         </ul>
