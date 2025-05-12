@@ -1,13 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import MainView  from "@/views/MainView.vue";
-import WriteView  from "@/views/board/WriteView.vue";
-import BoardView from  "@/views/board/BoardView.vue";
-import BoardDetailView from "@/views/board/BoardDetailView.vue";
-import { useBoardStore } from "@/stores/boardStore";
-import ModifyView from "@/views/board/ModifyView.vue";
-import JoinView from "@/views/auth/JoinView.vue";
-import LoginView from "@/views/auth/LoginView.vue";
 import axios from "axios";
+import boardRoutes from "./auth/board/boardRoutes";
+import userRoutes from "./auth/user/userRoutes";
 
 const routes = [
     {
@@ -16,45 +11,8 @@ const routes = [
         component: MainView,
 
     },
-    {
-        path: "/board/write",
-        name:"Write",
-        meta: { requiresAuth: true },
-        component: WriteView,
-      
-    },
-    {
-        path: "/board",
-        name:"Board",
-        meta: { requiresAuth: true },
-        component: BoardView,
-    },
-    {
-        path: "/board/detail/:boardId",
-        name:"BoardDetail",
-        meta: { requiresAuth: true },
-        beforeEnter: async(to, from, next) => {
-            const boardStore = useBoardStore();
-            await boardStore.getBoardDetail(to.params.boardId);
-            next();
-        },
-        component: BoardDetailView,
-    },
-    {
-        path: "/board/modify",
-        name:"Modify",
-        meta: { requiresAuth: true },
-        component: ModifyView,
-    },{
-        path:"/auth/join",
-        name:"Join",
-        component: JoinView,
-    },{
-        path:"/auth/login",
-        name:"Login",
-        component: LoginView,
-    }
-
+    ...boardRoutes,
+    ...userRoutes
 ];
 
 const router = createRouter({
@@ -85,7 +43,7 @@ router.beforeEach(async(to)=>{
 
     //토큰이 존재하지 않으면 인증이 필요한 페이지 접근 불가능
     // const isAuthenticated = !!localStorage.getItem("jwt"); // JWT토큰 존재 여부 체크
-    // if(to.meta.requiresAuth && !isAuthenticated){
+    // if(to.meta.requiresAuth){
     //     alert("로그인 후 이용해주세요");
     //     next("/"); // 인증되지 않은 경우 메인페이지로 이동 
     // }else{
