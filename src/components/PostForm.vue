@@ -1,12 +1,12 @@
 <template >
      <div class="form-container">
         <div class="form-group">
-          <label for="title">글 제목</label>
-          <input type="text" v-model="title" id="title" class="form-input"  />
+          <label class="label-title" for="title">글 제목</label>
+          <input type="text" v-model="title" id="title" class="input-title"  />
         </div>
   
         <div class="form-group">
-          <label for="content">글 내용</label>
+          <label class="label-content" for="content">글 내용</label>
           <textarea v-model="content" id="content" class="form-textarea" ></textarea>
         </div>
         
@@ -30,7 +30,7 @@
         </div>
   
         <div class="form-actions">
-          <button class="submit-button" @click="saveBoard">저장</button>
+          <button class="submit-button" @click="saveBoard">작성</button>
           <button class="cancel-button">취소</button>
         </div>
       </div>
@@ -173,75 +173,72 @@
     }
 </script>
 <style lang="scss" scoped>
-    .form-container {
+ .form-container{
+  display: flex; /* flex container로 설정 */
+  justify-content: center; /* 수평 가운데 정렬 */
+  flex-direction: column;
+  align-items: center;     /* 수직 가운데 정렬 */
+  background-color: #0e0e0e;
+  height: 100vh;
+  color: #ffffff;
+  font-size: 2.5rem;
+    font-family: sans-serif;
+   gap: 8rem; // 폼 간 적절한 간격
+  .form-group{   
     display: flex;
     flex-direction: column;
-    gap: 20px;
-
-
+    align-items: flex-start;
+    background-color: #0e0e0e;
+    height:auto;
+    width: 80vw;
+      margin-bottom: 0; /* 아래쪽 간격 조절 */
+     .label-title{
+      font-size: 3rem;
+      margin-bottom: 1rem;
+     }
+     .input-title{
+       width:  80vw;; 
+       height: 5rem;
+       font-size: 2.5rem;
+       border-radius: 7px;
+     }
+     .label-content{
+       font-size: 3rem;
+       margin-bottom: 1rem;
+     }
+     .form-textarea{
+      resize: none;
+      width: 80vw;
+      height: 30vh;
+      font-size: 2.5rem;
+       border-radius: 7px;
+     }
   }
 
-  .custom-addFile-btn{
-      cursor: pointer;
-      background-color:  #4CAF50;
-      border-radius: 4px;
-      width: 5vw;
-      color: black;
-  }
-
-  .form-group {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  label {
-    font-size: 16px;
-    margin-bottom: 8px;
-    color: #555;
-  }
-  
-  .form-input,
-  .form-textarea {
-    padding: 10px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  .form-textarea {
-    min-height: 150px;
-    resize: vertical;
-  }
-  
-  .form-actions {
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .submit-button,
-  .cancel-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    border-radius: 4px;
-    border: none;
+  .submit-button{
+    background-color: #ffffff;
+    border-radius: 7px;
+    width: 50rem;
+    height: 5rem;
     cursor: pointer;
+    font-size: 2.5rem;
+    &:hover{
+      background-color: rgb(194, 234, 64);
+    }
   }
-  
-  .submit-button {
-    background-color: #4CAF50;
-    color: white;
+
+    .cancel-button{
+    background-color: #ffffff;
+    border-radius: 7px;
+    width: 50rem;
+    height: 5rem;
+    cursor: pointer;
+    font-size: 2.5rem;
+    &:hover{
+      background-color: rgb(243, 83, 65);
+    }
   }
-  
-  .cancel-button {
-    background-color: #f44336;
-    color: white;
-  }
-  
-  .submit-button:hover {
-    background-color: #45a049;
-  }
-  
-  .cancel-button:hover {
-    background-color: #e53935;
-  }
+
+ }
+   
 </style>
