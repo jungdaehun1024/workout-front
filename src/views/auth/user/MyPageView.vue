@@ -1,22 +1,28 @@
 <template>
-    <div class="MypageContainer">
+      <div class="root-info-text">회원 정보</div>
+    <div class="mypage-container">
         <div class="infoElements">
-            <div>이름:</div><div>{{userInfo.name}}</div>
+            <div class="text-info">이름:</div>
+            <div class="username-area">{{userInfo.name}}</div>
         </div>
         <div class="infoElements">
-            <div>아이디:</div><div>{{userInfo.account}}</div>
+            <div class="text-info">아이디:</div>
+            <div class="account-area">{{userInfo.account}}</div>
         </div>
         <div class="infoElements">
-            <div>전화번호:</div><div>{{userInfo.ph}}</div>
+            <div class="text-info">전화번호:</div>
+            <div class="ph-area">{{userInfo.ph}}</div>
         </div>
         <div class="infoElements">
-            <div>E-mail:</div><div>{{userInfo.email}}</div>
+            <div  class="text-info">E-mail:</div>
+            <div class="email-area">{{userInfo.email}}</div>
         </div>
         <div class="infoElements">
-            <div>가입일:</div><div>{{ userInfo.userCreatedAt }}</div>
+            <div class="text-info">가입일:</div>
+            <div class="created-area">{{ userInfo.userCreatedAt }}</div>
         </div>
         <div class="infoElements">
-            <div @click="mvPasswordChangePage()">비밀번호 변경</div>
+            <div class="change-password" @click="mvPasswordChangePage()">비밀번호 변경</div>
         </div>
     </div>
    
@@ -40,22 +46,39 @@ const mvPasswordChangePage = ()=>{
 }
 </script>
 <style lang="scss" scoped>
-    .MypageContainer{
+.root-info-text{
+    color: #ffffff;
+    font-family: sans-serif;
+    text-align: center;
+    font-size: 6rem;
+    margin-top: 4rem;
+    
+   }
+ .mypage-container{
+    background-color: #0e0e0e;
+    height: 50vh;
+     font-family: sans-serif;
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     align-items: center;
+     gap: 2.5rem;
+    .infoElements{
         display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        width: 100vw;
-        height: 100vh;
-        background-color: rgb(219, 206, 21);
-        .infoElements{
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: larger;
-            background-color: rgb(167, 105, 31);
-            width: 40vw;
-            height: 10vh;
+        color: #ffffff;
+        font-size: 3.5rem;
+        .text-info{
+            margin-right: 1rem;
+            text-align: right;
+        }
+        .change-password{
+            cursor: pointer;
+            border-radius: 8px;
+            &:hover{
+                background-color: rgb(194, 234, 64);
+                color: #0e0e0e;
+            }
         }
     }
+ }
 </style>
