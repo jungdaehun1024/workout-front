@@ -1,5 +1,6 @@
 import JoinView from "@/views/auth/JoinView.vue";
 import LoginView from "@/views/auth/LoginView.vue";
+import DietPageView from "@/views/auth/user/DietPageView.vue";
 import MyPageView from "@/views/auth/user/MyPageView.vue";
 import PasswordChangeView from "@/views/auth/user/PasswordChangeView.vue";
 
@@ -23,6 +24,13 @@ export default[
         path:"/auth/user/passwordChange",
         name:"PasswordChange",
         component: PasswordChangeView,
+        meta:{requiresAuth: true}, // 보호된 페이지
+
+    },
+     {
+        path:"/auth/dietPage",
+        name:"dietPage",
+        component: DietPageView,
         meta:{requiresAuth: true}, // 보호된 페이지
 
     }
