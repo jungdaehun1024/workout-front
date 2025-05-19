@@ -1,28 +1,30 @@
 <template >
-    <div class = "container" id = "container">
-        <div class="board">
-            <div class ="boardFlexContent">
-                <div class="boardTitle">제목:{{boardDetail.data.title}}</div>
-                <div class="boardId">게시글 ID:{{boardDetail.data.boardId}}</div>
-                
-            </div>
-            <div class="boardContent">내용:{{boardDetail.data.content}} {{ backBoardList }}</div>
-            <div class =btns>
-                <button @click="pushBoardId">수정</button>
-                <button @click="delBoard(boardDetail.data.boardId)">삭제</button>
-                <button @click="mvBoardList">목록으로</button>
+    <div class ="board-detail-container">
+      <div class="board-elements">
+          <div class="top-area">
+          <div class="board-title">제목:{{boardDetail.data.title}}</div>
+          <span class="board-date">{{ boardDetail.data.createdAt }}</span>
+          </div>
+          <hr class="area-line">
+          <div class="board-account">{{ boardDetail.data.writerAccount }}</div>
+          <hr class="area-line">
+          <div class="board-content">{{boardDetail.data.content}} {{ backBoardList }}</div>
+           <hr class="area-line">  
+          <div class =btns>
+                <div class="board-ctr-btns">
+                <button class="modify-btn" @click="pushBoardId">수정</button>
+                <button class="delete-btn" @click="delBoard(boardDetail.data.boardId)">삭제</button>
+                </div>
+                <button class="back-page-btn" @click="mvBoardList">목록으로</button>
             </div>
 
-          <div class="form-group">
+          <div class="file-group">
           <label for="fileList"> 첨부파일 목록</label>
-          <li v-for="(file,idx) in boardDetail.data.attachments" :key="idx">
-            <button @click="downloadFile(file)">{{file.attachmentName}}</button>
+          <li class="file" v-for="(file,idx) in boardDetail.data.attachments" :key="idx">
+            <span @click="downloadFile(file)">{{file.attachmentName}}</span> 
           </li>
         </div>
-    
-  
-        </div>
-     
+      </div>
     </div>
 </template>
 <script setup>
@@ -71,50 +73,94 @@ const downloadFile = (file)=>{
 
 </script>
 <style  lang="scss" scoped >
-.container {
-  display: flex;
+.board-detail-container{
+  display:flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* 부모 컨테이너에 높이 추가 */
-  background-color: rgb(148, 144, 144);
-  box-sizing: border-box; /* 패딩을 포함한 크기 계산 */
-
-  .board {
-    display: flex;
-    flex-direction: column; /* 수직 정렬 */
-    justify-content: center;
-    align-items: center;
-    width: 70%;
-    height: 80vh; /* 너무 크면 조절 */
-    background-color: rgb(65, 60, 60);
-    color: white; /* 글씨 보이도록 */
-    font-size: larger;
-
-    .boardContent{
+  background-color: #0a0a0a;
+  font-family: sans-serif;
+  font-size: 2.5rem;
+  color:#ffffff ;
+  .board-elements{
+    margin-top: 20rem;
+    background-color:#0a0a0a;
+    width: 80vw;
+    height: 70vh;
+      .top-area{
+        display: flex;
+        justify-content: space-between;
+        .board-date{
+          font-size: 2rem;
+        }
+      }
+      .top-area-line{
         width: 100%;
-        height: 100vh;
-        background-color: rgb(56, 54, 54);
-    }
-    .boardFlexContent {
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-      height: 10vh;
-      background-color:  rgb(71, 70, 70);
-      .boardTitle{
-        width: 50%;
-        height: 30vh;
-        padding: 10px;
+        height: 0.07rem;
+        background-color: #ffffff ;
+        border: none;
       }
-      .boardId{
-        width: 50%;
-        text-align: right;
-        padding: 10px;
+      .board-account{
+       font-style: italic;
+       font-size: 2rem;
       }
-    }
+      .board-content{
+        height: 60rem;
+      }
+
+      .btns{
+        display: flex;
+        justify-content: space-between;
+        gap: 0.1rem;
+        .board-ctr-btns{
+          .modify-btn{
+            background-color: #ffffff;
+            font-size: 2rem;
+            width: 20rem;
+            height: 5rem;
+            cursor: pointer;
+            &:hover{
+              background-color: rgb(214, 240, 17);
+            }
+            border-radius: 8px;
+          }
+          .delete-btn{
+            background-color: #ffffff;
+            width: 20rem;
+            height: 5rem;
+            font-size: 2rem;
+            cursor: pointer;
+            &:hover{
+             background-color: rgb(243, 83, 65);
+            }
+            border-radius: 8px;
+          }
+        }
+          .back-page-btn{
+          background-color: #ffffff;
+          width: 20rem;
+          height: 5rem;
+          font-size: 2rem;
+          cursor: pointer;
+          &:hover{
+            background-color: rgb(45, 144, 224);
+          }
+          border-radius: 8px;
+        }
+      }
+
+      .file-group{
+        margin-top: 5rem;
+        width: auto;
+        .file{
+          width: auto;
+          &:hover{
+            color: rgb(32, 201, 151);
+          }
+        }
+      }
+
   }
+
 }
-
-
-    
+   
 </style>

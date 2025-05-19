@@ -1,9 +1,12 @@
 <template>
-    <div class="boardList">
-        <div >
+    <div class="boards-box">
+        <div>
             <ul>
-                <li v-for="(board,index) in boards.data" :key="index" :value="board.boardId" @click="getBoardDetail">
-                    {{ board.title }} 
+                <li v-for="(board,index) in boards.data" :key="index" :value="board.boardId" @click="getBoardDetail(board.boardId)">
+                   <div class="board-info">
+                    <span class="title">{{ board.title }}</span>
+                    <span class="idx">{{ board.boardId }}</span>
+                   </div>
                 </li>   
             </ul>
         </div>
@@ -27,36 +30,48 @@
     })
 
     // 게시글 상세보기 이동 
-    const getBoardDetail = async(event)=>{
-        const boardId = event.target.value;
-        router.push({name:"BoardDetail",params:{boardId:boardId}});
+    const getBoardDetail = async(boardId)=>{
+        router.push({name:"BoardDetail",params:{boardId}});
     }
 </script>
 <style lang="scss" scoped>
-
-ul {
-  list-style-type: none;
-  padding: 0;
-  
-  li {
-    padding: 8px;
-    border-bottom: 1px solid #ddd;
-    cursor: pointer;
-    transition: all 0.3s ease;
-
-    &:hover {
-      background-color: #f0f0f0;
+.boards-box{
+    background-color: #0e0e0e;
+    height: 80vh;
+    width: 100vw;
+ 
+    // display: flex;
+    .board-info{
+        display: flex;
+        justify-content: space-between;
+        .title{
+            margin-left: 1rem;
+        }
+        .idx{
+              margin-right: 1rem;
+        }
+    }
+    ul{
+        list-style: none;
+        background-color: rgb(41, 41 ,41);
+        padding: 0;
+        width: auto;
+        li{
+           padding: 1rem;
+            color: #ffffff;
+            border-bottom: 1px solid rgb(220, 220, 220) ;
+            font-size: 3rem;
+            cursor: pointer;
+            &:hover{
+                background-color:  #666A73;
+            }
+           
+        }
     }
 
-    &.active-link {
-      font-weight: bold;
-      color: green;
-    }
-  }
+    
 }
 
-.boardList {
-    height: 100vh;
-    background-color: rgb(148, 144, 144);
-}
+     
+
 </style>
