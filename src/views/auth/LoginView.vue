@@ -1,24 +1,23 @@
 <template>
-    <div class =container>
+  <div class =login-box>
         <input type="hidden" id ="encPW" v-model="encryptPwd" >
-        <div class="join-text">로그인</div>
-        <div class ="form-container">
-            <div class="form-group">
+        <div class="login-text">로그인</div>
+    <div class ="form-container">
+         <div class="form-group">
           <label for="title">아이디</label>
-          <input type="text" v-model="account" id="title" class="form-input"  />
-        </div>
+          <input class="form-input"  type="text" v-model="account" id="title" placeholder="아이디를 입력해주세요"  />
+         </div>
         <div class="form-group">
           <label for="password">패스워드</label>
-          <input type="text" v-model="password" id="password" class="form-input"  />
+          <input class="form-input" type="password" v-model="password" id="password" placeholder="패스워드를 입력해주세요"   />
         </div>
     
-        <button @click="userLogin">로그인</button>
+        <button class="login-btn" @click="userLogin">로그인</button>
     </div>
-    </div>
+  </div>
 
 </template>
 <script setup>
-// import forge from 'node-forge';
 import axios from 'axios';
 import {ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -28,30 +27,7 @@ const router = useRouter();
 const account = ref("");
 const password = ref("");
 
-// onMounted(async()=>{
-//     try{
-//         const res = await axios.get("/api/getPublicKeyModule");
-//         const {data} = res.data;
-//         publicModules.value = data.publicKeyModules;
-//         publicExponent.value = data.publicKeyExponent;
-//     }catch(err){
-//         console.error(err.message);
-//     }
- 
-   
-// });
 
-//공개 키 생성 함수
-// const encryptData = ()=>{
-//   const rsa = forge.pki.rsa;
-//   const publicKey = rsa.setPublicKey(
-//    new forge.jsbn.BigInteger(publicModules.value,16),
-//    new forge.jsbn.BigInteger(publicExponent.value,16)
-//   );
-//   //공개 키를 사용한 RSA 암호화(OAEP 패딩 사용)
-//   const encrypted = publicKey.encrypt(password.value.trim(),"RSA-OAEP");
-//   encryptPwd.value = forge.util.encode64(encrypted);
-// }
 
 
 //로그인 요청
@@ -71,40 +47,60 @@ const userLogin = async()=>{
 
 </script>
 <style lang="scss" scoped>
-
-.container{
-    background-color: brown;
-    display: flex;
-    flex-direction: column; /* 각 form-group은 세로로 정렬 */
-    justify-content: center;   /* 수평 중앙 정렬 */
-    align-items: center;       /* 수직 중앙 정렬 */
-    height: 100vh;
-    width: 100vw;
-    .join-text{
-        font-size: 50px;
-        color: white;
+  .login-box{
+    background-color: #0e0e0e;
+    .login-text{
+      text-align: center;
+      margin-left: 17rem;
+      color: #ffffff;
+      font-size: 5rem;
     }
     .form-container{
-        background-color: rgb(235, 161, 65);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+      .form-group{
         display: flex;
-        flex-direction: column;
+        align-items: center;
         justify-content: center;
-        align-items: flex-start;   /* 세로 방향으로 상단 정렬 */
-        height: 80vh;
-        width: 60vw;
-        
-        .form-group{
-                 font-size: 30px;
-                 height: 5vh;
-                 width: 40vw;
-                 display: flex;
-                 flex-direction: column;
-                 justify-content: center;
-                 margin-bottom: 20px; /* 각 항목 간 간격 */
-           
+        font-size: 4rem;
+        margin:5rem 0;
+      
+        .form-input{
+          background-color: rgb(233,233,233);
+          font-size: 3.5rem;
+          border-radius: 6px;
+          width: 100rem;
+          height: 5rem;
+          &::placeholder{
+            color: #0e0e0e;
+            text-align: center;
+            font-size: 2rem;
+          }
+        }
+        label{
+          padding-right: 2rem;
+          text-align: right;
+          width: 15rem;
+          color: #ffffff;
+          margin-right: 2rem;
+        }
+      }
+        .login-btn{
+          background-color: #302d2d;
+          border: none;
+          cursor: pointer;
+          margin-top: 4rem;
+          border-radius: 10px;
+          font-size: 5rem;
+          color: #ffffff;
+          width:  30vw;
+          height: 10vh;
+          margin-left: 17rem;
         }
     }
- 
+  }
 
-}
 </style>
