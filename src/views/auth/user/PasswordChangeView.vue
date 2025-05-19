@@ -1,15 +1,16 @@
 <template>
-    <div class="MypageContainer">
-        <label for="originPassword">기존 비밀번호</label>
-        <input type="text" v-model="originPassword" class="infoElements"  id="originPassword"  placeholder="기존 비밀번호">
+    <div class="root-text">비밀번호 변경</div>
+    <div class="change-password-container">
+        <label for="input-originPassword">기존 비밀번호</label>
+        <input type="text" v-model="originPassword" class="input-elements"  id="originPassword"  placeholder="기존 비밀번호">
         <label for="newPassword">변경할 비밀번호</label>
-        <input type="text" v-model="newPassword" class="infoElements"  id="newPassword"  placeholder="변경할 비밀번호">
+        <input type="text" v-model="newPassword" class="input-elements"  id="newPassword"  placeholder="변경할 비밀번호">
 
         <label for="checkNewPassword">비밀번호 재확인</label>
-        <input type="text" v-model="checkNewPassword" class="infoElements"  id="checkNewPassword"  placeholder="비밀번호 확인">
-    
+        <input type="text" v-model="checkNewPassword" class="input-elements"  id="checkNewPassword"  placeholder="비밀번호 확인">
+        <button  class="confirm-btn" @click="changePassword">확인</button>
     </div>
-    <button @click="changePassword">확인</button>
+  
 </template>
 <script setup>
 
@@ -57,23 +58,48 @@ const changePassword =  async(event)=>{
     
 }
 </script>
-<style lang="scss">
-    // .MypageContainer{
-    //     display: flex;
-    //     flex-direction: column;
-    //     justify-content: center;
-    //     align-items: center;
-    //     width: 100vw;
-    //     height: 100vh;
-    //     background-color: rgb(219, 206, 21);
-    //     .infoElements{
-    //         display: flex;
-    //         justify-content: center;
-    //         align-items: center;
-    //         font-size: larger;
-    //         background-color: rgb(167, 105, 31);
-    //         width: 40vw;
-    //         height: 10vh;
-    //     }
-    // }
+<style lang="scss" scoped>
+.root-text{
+    margin-top: 10rem;
+    font-family: sans-serif;
+    color: #ffffff;
+    font-size: 4rem;
+    font-weight: bolder;
+    text-align: center;
+}
+.change-password-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #0e0e0e;
+    font-family: sans-serif;
+    font-size: 2.5rem;
+    color: #ffffff;
+    gap: 2.5rem;
+    margin-top: 10rem;
+    .input-elements{
+        height: 3.5rem;
+        width: 10vw;
+        border-radius: 7px;
+        font-size: 2rem;
+        &::placeholder{
+            font-size: 1.5rem;
+            color: #0e0e0ee3;
+        }
+    }
+
+    .confirm-btn{
+        border-radius: 7px;
+        width: 15rem;
+        height: 5rem;
+        font-size: 2.5rem;
+        font-weight: bolder;
+            &:hover{
+                background-color: rgb(194, 234, 64);
+                color: #0e0e0e;
+            }
+    }
+
+}
 </style>
