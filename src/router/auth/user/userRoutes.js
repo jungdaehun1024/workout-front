@@ -1,6 +1,8 @@
 import JoinView from "@/views/auth/JoinView.vue";
 import LoginView from "@/views/auth/LoginView.vue";
-import DietPageView from "@/views/auth/user/DietPageView.vue";
+import DietPageView from "@/views/auth/user/diet/DietPageView.vue";
+import FoodDetailView from "@/views/auth/user/diet/FoodDetailView.vue";
+import FoodSearchView from "@/views/auth/user/diet/FoodSearchView.vue";
 import MyPageView from "@/views/auth/user/MyPageView.vue";
 import PasswordChangeView from "@/views/auth/user/PasswordChangeView.vue";
 
@@ -28,10 +30,21 @@ export default[
 
     },
      {
-        path:"/auth/dietPage",
+        path:"/auth/diet/dietPage",
         name:"dietPage",
         component: DietPageView,
-        meta:{requiresAuth: true}, // 보호된 페이지
+
+    },
+     {
+        path:"/auth/diet/foodSearchPage",
+        name:"foodSearchPage",
+        component: FoodSearchView,
+
+    },
+     {
+        path:"/auth/diet/foodDetail",
+        name:"foodDetail",
+        component: FoodDetailView,
 
     }
 ]
