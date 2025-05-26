@@ -17,7 +17,7 @@
                 <RouterLink  class="nav-link" to="/auth/login" >로그인</RouterLink>
             </li>
                 <li>
-                <RouterLink  class="nav-link" to="/auth/dietPage" >식사 기록</RouterLink>
+                <RouterLink  class="nav-link" to="/auth/diet/dietPage" >식사 기록</RouterLink>
                 </li>
             <li>
                 <RouterLink  class="nav-link" to="/auth/user/myPage" >내 정보</RouterLink>
