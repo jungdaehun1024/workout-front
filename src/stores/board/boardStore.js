@@ -12,9 +12,9 @@ export const useBoardStore  = defineStore("board",()=>{
     //Action
 
     //게시글 목록 가져오기
-    async function getBoards(){
+    async function getBoards(paginationIndex){
         try{
-            const response = await axios.get("/api/getBoards"); // 게시글 목록 가져오기
+            const response = await axios.get("/api/getBoards",{params:{paginationIndex},withCredentials:true}); // 게시글 목록 가져오기
             boards.value = response.data;
         }catch(err){
             console.error(err.message);

@@ -10,24 +10,51 @@
                 </li>   
             </ul>
         </div>
+        
+    <PaginationBar class="paginationBtns" v-if="isLoaded" :totalCount="totalCount" @changePage="handleChangePage" />
     </div>
+
 </template>
 <script setup>
     // import axios from 'axios';
-    import {  onBeforeMount} from 'vue';
+    import {  onMounted, ref, watch} from 'vue';
     import { useRouter } from 'vue-router';
     import {useBoardStore} from '@/stores/board/boardStore';
     import { storeToRefs } from 'pinia';
+    import PaginationBar from '@/components/PaginationBar.vue';
+    import axios from 'axios';
 
     const router = useRouter();
     const boardStore = useBoardStore();
     const {boards} = storeToRefs(boardStore);
+    const totalCount = ref(0);
+    const isLoaded = ref(false);
 
+    const clickPaginationIndex = ref(0);
    
-    onBeforeMount(async()=>{
-        // 게시글 목록 불러오기
-        await boardStore.getBoards(); 
+    //페이지네이션 바에서 emit한 페이지 번호 가져오는 함수
+    const handleChangePage = (page)=>{
+       clickPaginationIndex.value = page;
+
+    }
+
+    
+    onMounted(async()=>{
+        // 게시글 목록 불러오기 
+        await boardStore.getBoards(clickPaginationIndex.value); 
+            const response = await axios.get("/api/getBoardTotalCount",{withCredentials: true});
+            totalCount.value = response.data.data;
+            isLoaded.value = true;
     })
+
+
+    watch(clickPaginationIndex,async(newValue)=>{
+        try{
+            await boardStore.getBoards(newValue);
+        }catch(err){
+            console.log("게시글 불러오기 실패"+err);
+        }
+    });
 
     // 게시글 상세보기 이동 
     const getBoardDetail = async(boardId)=>{
@@ -69,9 +96,11 @@
         }
     }
 
+    .paginationBtns{
+        display: flex;
+    } 
     
 }
 
-     
 
 </style>
