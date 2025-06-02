@@ -107,6 +107,8 @@ const saveFood = async()=>{
     foodFat : computedFat.value,
     dietCategory : localStorage.getItem("dietCategory"),
     foodWeight : foodDetail.value.SERVING_SIZE,
+    foodRecordedDate : localStorage.getItem("foodRecordedDate"),
+
   }
   const response = await axios.post("/api/saveFoodRequest",foodInfo,{withCredentials: true});
   localStorage.clear();
