@@ -70,6 +70,7 @@
 - **eslint**: ^7.32.0  
 - **sass**: ^1.85.1  
 - **sass-loader**: "^16.0.5"  
+- **dayjs**: "^1.11.13"
 
 ### 기술스택
 - **Frontend**: Vue.js(Vue 3), Vue-Router  
