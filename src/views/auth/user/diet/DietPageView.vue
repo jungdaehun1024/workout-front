@@ -48,6 +48,7 @@
             v-for="(food, idx) in mealRecords[meal]"
             :key="idx"
             class="food-item"
+            @click="getFoodDetailRequset(food)"
           >
             <div class="food-name">{{ food.foodName }}</div>
             <div class="food-desc">{{ food.foodWeight }}g</div>
@@ -240,6 +241,11 @@ const roundTo = (num,digits)=>{
   const factor = 10 ** digits; // 10을 digits 번 곱함
   return Math.round(num*factor)/factor  
 
+}
+
+const getFoodDetailRequset = async(food)=>{
+  localStorage.setItem("foodRecordId",food.foodRecordId);
+  router.push('/auth/diet/foodRecordDetail');
 }
 </script>
 
