@@ -12,9 +12,6 @@
                    <div class="search-food-kcal">{{item.SERVING_SIZE}}당 {{Math.trunc(item.AMT_NUM1)}}Kcal</div>
                 </li>
             </ul>
-            <!-- <button @click="currentPage--" :disabled="currentPage === 1">이전</button>
-            <span>페이지: {{ currentPage }}</span>
-            <button @click="currentPage++" :disabled="currentPage === totalPages">다음</button> -->
         </div>
     </div>
 
@@ -44,7 +41,7 @@ const router = useRouter();
 
     const foodDetail = (foodIdx) =>{
         localStorage.setItem("foodDetail",JSON.stringify(searchResult.value[foodIdx]));
-        router.push("/auth/diet/foodDetail");
+        router.push("/auth/diet/foodSearchDetail");
     }
    
 </script>
