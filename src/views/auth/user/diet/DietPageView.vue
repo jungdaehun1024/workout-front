@@ -66,6 +66,10 @@
         </div>
       </div>
     </div>
+    <div class = "search-history">
+      <input class="search-history-input" type="text" placeholder="조회하려는 날짜를 입력하세요(YYYYMMDD)" v-model="searchDate">
+      <button class="search-history-btn" @click="searchDietByDate">검색</button>
+    </div>
 
   </div>
 </template>
@@ -107,6 +111,36 @@ const thisWeekDates = []; //"이번주" 월~일 까지의 날짜 데이터가 �
 const router = useRouter()
 const today = dayjs().format("YYYY-MM-DD"); // 오늘(날짜)
 const dayNumber = dayjs().isoWeekday(); // 오늘(요일)
+const searchDate = ref(""); // 검색하려는 과거의 날짜를 받는 변수
+
+const searchDietByDate = ()=>{
+  const validFormat = /^\d{8}$/.test(searchDate.value); // 정규표현식으로 8자리 숫자문자인지 체크(YYYYDDMM)
+    if(!validFormat){
+      alert("YYYYMMDD형식으로 입력해주세요");
+      return;
+    }
+
+    //실제 존재 가능한 날짜인지 확인
+    const year = parseInt(searchDate.value.slice(0,4)); // 연도 
+    const month = parseInt(searchDate.value.slice(4,6))-1;// 달(JS Date는 0~11월)
+    const day = parseInt(searchDate.value.slice(6));//일
+
+    const date = new Date(year,month,day);
+    console.log(date.getMonth());
+    console.log(date);
+     console.log(month);
+    //js date는 잘못된 날짜(2월30)도 보정하기 때문에 입력값과 일치하는지 체크
+    const isRealDate = 
+      date.getFullYear() === year &&
+      date.getMonth() === month &&
+      date.getDate() === day;
+    if(!isRealDate){
+      alert("유효하지 않은 날짜입니다.");
+      return;
+    }
+
+    alert("유효한 날짜입니다.");
+}
 
 const calcDateTime = dayjs();
 const startOfWeek = calcDateTime.startOf('isoWeek'); // 이번주 월요일 
@@ -256,6 +290,25 @@ const getFoodDetailRequset = async(food)=>{
   padding: 1rem;
   min-height: 100vh;
   font-family: sans-serif;
+  .search-history{
+    display: flex;
+    .search-history-input{
+      margin-right: 0.5rem;
+      width: 30rem;
+      height: 3.5rem;
+      border: none;
+      border-radius: 5px;
+      &::placeholder{
+        text-align: center;
+        color: #000;
+      }
+    }
+    .search-history-btn{
+       cursor: pointer;
+       border: none;
+       border-radius: 5px;
+    }
+  }
 
   .total-header{
     display: flex;
