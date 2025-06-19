@@ -31,14 +31,14 @@
   
         <div class="form-actions">
           <button class="submit-button" @click="saveBoard">작성</button>
-          <button class="cancel-button">취소</button>
+          <button class="cancel-button" @click="cancelBoardWrite">취소</button>
         </div>
       </div>
 </template>
 <script setup>
- import { onMounted, ref } from 'vue';
+ import { onMounted, onUnmounted, ref } from 'vue';
     import axios from 'axios';
-    import { useRouter } from 'vue-router';
+    import { onBeforeRouteLeave, useRouter } from 'vue-router';
     import { useBoardStore } from '@/stores/board/boardStore';
     import { storeToRefs } from 'pinia';
 
@@ -52,12 +52,14 @@
     const router = useRouter();
     const boardStore = useBoardStore();
     const {boardDetail} = storeToRefs(boardStore);
+    const isSafeToLeave = ref(false); // 이동 허용 여부
 
     //Session스토리지에 담긴 게시글 상세 정보가 있다->게시글 수정 (새로고침 해도 값 유지)
     //                                       없다.->게시글 생성 (빈 문자열)
     onMounted(()=>{
         const getSession = JSON.parse(sessionStorage.getItem("boardDetail"));
         const getBoardDetail = getSession?._value?.data;
+        window.addEventListener("beforeunload",handleBeforeUnload);
         if(getBoardDetail){
             title.value = getBoardDetail?.title ;
             content.value = getBoardDetail?.content ;
@@ -75,8 +77,27 @@
             content.value = "";
         }
     });
+    onUnmounted(()=>{
+      window.removeEventListener("beforeunload",handleBeforeUnload);
+    })
 
-
+    //라우터 이동을 감지
+    onBeforeRouteLeave((to,from,next)=>{
+      if(isSafeToLeave.value){
+        next();
+        return;
+      }
+      const answer = confirm("페이지 이동시 작성중이던 내용은 저장되지 않습니다.");
+      if(answer){
+        next();
+      }else{
+        next(false);
+      }
+    });
+    const handleBeforeUnload = (evnet) =>{
+      event.preventDefault(); // 기본 동작을 막음
+      evnet.returnValue=""; 
+    }
     //게시글 생성
     const createBoard = async() =>{
         try {
@@ -104,7 +125,6 @@
     const modifyBoard = async()=>{
         try{
             const formData = new FormData();
-            console.log(boardDetail.value.data);
             formData.append("boardId",boardDetail.value.data.boardId);
             formData.append("title",title.value);
             formData.append("content",content.value);
@@ -124,6 +144,7 @@
             // 기존 boardDetail 객체를 유지하면서 내부 값만 초기화
             //  (수정 중 게시글 생성 페이지로 넘어가면 기록이 남기때문)
             Object.assign(boardDetail.value, { data: {} });
+             alert("게시글이 수정에 성공했습니다.");
             router.push("/board");
         }catch(err){
             console.error(err.message);
@@ -132,11 +153,20 @@
 
     //게시글 수정인지 생성인지 판단하고 함수 실행
     const saveBoard = ()=>{
+        isSafeToLeave.value= true;
         //게시글 상세 데이터가 있으면 수정
         if(boardDetail.value?.data?.boardId){
             modifyBoard();
         }else {
             createBoard();
+        }
+    }
+
+    const cancelBoardWrite = ()=>{
+        const checkCancel = confirm("수정을 취소하시겠습니까?");
+        if(checkCancel){
+          isSafeToLeave.value = true;
+          router.push("/board");
         }
     }
 
@@ -147,9 +177,6 @@
     
     }
 
-    
-    
-      
     //첨부파일 삭제 함수
     const deleteFile = (idx)=>{
       files.value.splice(idx,1);

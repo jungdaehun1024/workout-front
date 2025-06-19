@@ -15,8 +15,6 @@ export const useUserStore = defineStore("user",()=>{
             const response = await axios.get("/api/getUserInfo",{
                 withCredentials: true
             });
-            console.log(response);
-
             userInfo.value = response.data.data;
 
         }catch(err){
