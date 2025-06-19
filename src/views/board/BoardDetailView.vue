@@ -12,8 +12,8 @@
            <hr class="area-line">  
           <div class =btns>
                 <div class="board-ctr-btns">
-                <button class="modify-btn" @click="pushBoardId">수정</button>
-                <button class="delete-btn" @click="delBoard(boardDetail.data.boardId)">삭제</button>
+                <button class="modify-btn" v-if="isWriter" @click="pushBoardId">수정</button>
+                <button class="delete-btn" v-if="isWriter" @click="delBoard(boardDetail.data.boardId)">삭제</button>
                 </div>
                 <button class="back-page-btn" @click="mvBoardList">목록으로</button>
             </div>
@@ -29,14 +29,33 @@
 </template>
 <script setup>
 import { useBoardStore } from '@/stores/board/boardStore';
+import { useUserStore } from '@/stores/user/userStore';
 import axios from 'axios';
 import { storeToRefs } from 'pinia';
+import { onMounted,ref } from 'vue';
 import {  useRouter } from 'vue-router';
 
 const boardStore = useBoardStore();
 const {boardDetail} = storeToRefs(boardStore);
 const router = useRouter();
 
+//게시글 상세에 접근한 사용자가 작성자인지 체크하는 토글
+const isWriter =ref(false);
+
+const userStore = useUserStore();
+const {userInfo} = storeToRefs(userStore);
+
+onMounted(async()=>{
+  await userStore.getUserInfo();
+  const wirterAccount = boardDetail.value.data.writerAccount;
+  if(userInfo.value.account === wirterAccount){
+    isWriter.value = true;
+    console.log("일치");
+  }else{
+    isWriter.value=false;
+     console.log("불일치");
+  }
+})
 //목록으로 돌아가는 메소드
 const mvBoardList = ()=>{
     router.push("/board");
@@ -44,12 +63,18 @@ const mvBoardList = ()=>{
 
 //게시글 삭제
 const delBoard = async(boardId)=>{
-        try{
-            await axios.put(`/api/deleteBoard/${boardId}`); 
-        }catch(err){
-            console.error("게시글 삭제 실패"+err.message);
-        }
-    router.push("/board");
+  const checkDelete = confirm("삭제된 뒤에는 복구할 수 없습니다.");
+  if(checkDelete){
+    try{
+      await axios.put(`/api/deleteBoard/${boardId}`); 
+      alert("삭제가 완료되었습니다.");
+       router.push("/board");
+      }catch(err){
+         alert("삭제를 실패했습니다.");
+      console.error("게시글 삭제 실패"+err.message);
+      }
+
+  } 
 }
 
 //수정 페이지로 이동
