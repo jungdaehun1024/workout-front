@@ -67,10 +67,74 @@
       </div>
     </div>
     <div class = "search-history">
-      <input class="search-history-input" type="text" placeholder="조회하려는 날짜를 입력하세요(YYYYMMDD)" v-model="searchDate">
+      <input class="search-history-input" type="text" placeholder="조회하려는 날짜를 입력하세요(YYYYMMDD)" v-model="inputPastDate">
       <button class="search-history-btn" @click="searchDietByDate">검색</button>
-    </div>
+          
+      <!-- 모달 사용 -->
+      <Modal v-model:visible="isOpen">
+      <template #diet>
+        <div class="past-meal-box">
+        
+        
+          <div class="past-meal-date">[{{ inputPastDate }}의 기록]</div>
+        
+        <div class="breakfast-box">
+          <div class="breakfast-text">[아침 식사]</div>
+           <div class="breakfast-diet" v-for="(diet,index) in pastDiet['아침 식사']" :key="index">
+             <div>{{ diet.foodName }}</div>
+             <div class="breakfast-nutrition">
+              <div>탄수화물:{{ diet.foodCarbo }}</div>
+              <div>단백질:{{ diet.foodProtein }}</div>
+              <div>지방:{{ diet.foodFat }}</div>
+            </div>  
+               <div>칼로리:{{ diet.foodKcal }}</div>
+           </div>
+        </div>
+        <hr>
+        <div class="lunch-box">
+          <div class="lunch-text">[점심 식사]</div>
+           <div class="lunch-diet" v-for="(diet,index) in pastDiet['점심 식사']" :key="index">
+           <div>{{ diet.foodName }}</div>
+            <div class="lunch-nutrition">
+             <div>탄수화물:{{ diet.foodCarbo }}</div>
+             <div>단백질:{{ diet.foodProtein }}</div>
+             <div>지방:{{ diet.foodFat }}</div>
+            </div> 
+             <div>칼로리:{{ diet.foodKcal }}</div>
+           </div>
+        </div>
 
+        <hr>
+        <div class="dinner-box">
+          <div class="dinner-text">[저녁 식사]</div>
+           <div class="dinner-diet" v-for="(diet,index) in pastDiet['저녁 식사']" :key="index">
+             <div>{{ diet.foodName }}</div>
+             <div class="dinner-nutrition">
+              <div>탄수화물:{{ diet.foodCarbo }}</div>
+              <div>단백질:{{ diet.foodProtein }}</div>
+              <div>지방:{{ diet.foodFat }}</div>
+            </div> 
+            <div>칼로리:{{ diet.foodKcal }}</div> 
+           </div>
+        </div>
+            <hr>
+        <div class="snack-box">
+          <div class="snack-text">[간식/기타]</div>
+           <div class="snack-diet" v-for="(diet,index) in pastDiet['간식/기타']" :key="index">
+             <div>{{ diet.foodName }}</div>
+             <div class="snack-nutrition">
+              <div>탄수화물:{{ diet.foodCarbo }}</div>
+              <div>단백질:{{ diet.foodProtein }}</div>
+              <div>지방:{{ diet.foodFat }}</div>
+             </div>
+              <div>칼로리:{{ diet.foodKcal }}</div>
+           </div>
+        </div>
+
+       </div>
+      </template>
+      </Modal>
+    </div>
   </div>
 </template>
 
@@ -80,7 +144,18 @@ import dayjs from 'dayjs';
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import isoWeek from 'dayjs/plugin/isoWeek'
+import utc from 'dayjs/plugin/utc';
+import Modal from '@/components/BaseModal.vue'
+import { useFoodStore } from '@/stores/food/foodStore';
+import { storeToRefs } from 'pinia';
+dayjs.extend(utc);
 dayjs.extend(isoWeek);
+
+
+ const isOpen = ref(false) // false면 안 보이고, true면 보임
+
+ const foodStore = useFoodStore();
+ const {inputPastDate} = storeToRefs(foodStore); // 검색하려는 과거의 날짜를 받는 변수
 
 // 요일 정보
 const days = ref([
@@ -111,35 +186,70 @@ const thisWeekDates = []; //"이번주" 월~일 까지의 날짜 데이터가 �
 const router = useRouter()
 const today = dayjs().format("YYYY-MM-DD"); // 오늘(날짜)
 const dayNumber = dayjs().isoWeekday(); // 오늘(요일)
-const searchDate = ref(""); // 검색하려는 과거의 날짜를 받는 변수
 
-const searchDietByDate = ()=>{
-  const validFormat = /^\d{8}$/.test(searchDate.value); // 정규표현식으로 8자리 숫자문자인지 체크(YYYYDDMM)
+//과거 식단 조회 결과를 담는 객체
+const pastDiet = ref({
+      "아침 식사" : [],
+      "점심 식사" : [],
+      "저녁 식사": [],
+      "간식/기타" : []
+  });
+
+//특정 날짜의 식사 데이터를 조회 
+const searchDietByDate = async()=>{
+  Object.keys(pastDiet.value).forEach((key)=>{
+    pastDiet.value[key] = [];
+  });
+  const validFormat = /^\d{8}$/.test(inputPastDate.value); // 정규표현식으로 8자리 숫자문자인지 체크(YYYYDDMM)
     if(!validFormat){
       alert("YYYYMMDD형식으로 입력해주세요");
+      inputPastDate.value = "";
       return;
     }
 
     //실제 존재 가능한 날짜인지 확인
-    const year = parseInt(searchDate.value.slice(0,4)); // 연도 
-    const month = parseInt(searchDate.value.slice(4,6))-1;// 달(JS Date는 0~11월)
-    const day = parseInt(searchDate.value.slice(6));//일
+    const year = parseInt(inputPastDate.value.slice(0,4)); // 연도 
+    const month = parseInt(inputPastDate.value.slice(4,6))-1;// 달(JS Date는 0~11월)
+    const day = parseInt(inputPastDate.value.slice(6));//일
 
     const date = new Date(year,month,day);
-    console.log(date.getMonth());
-    console.log(date);
-     console.log(month);
+
     //js date는 잘못된 날짜(2월30)도 보정하기 때문에 입력값과 일치하는지 체크
     const isRealDate = 
       date.getFullYear() === year &&
       date.getMonth() === month &&
       date.getDate() === day;
+
     if(!isRealDate){
       alert("유효하지 않은 날짜입니다.");
+      inputPastDate.value = "";
       return;
     }
+    const utcDate = `${year}-${(month+1).toString().padStart(2,'0')}-${day.toString().padStart(2,'0')}`
+    try{
+      const response = await dietByDate(utcDate);
+        if(response.length === 0){
+          alert("해당 날짜의 기록이 존재하지 않습니다.");
+          inputPastDate.value = "";
+          return;
+        }
+          for(const value of response){
+            if(value["dietCategory"] === "아침 식사"){
+              pastDiet.value["아침 식사"].push(value);
+            }else if(value["dietCategory"] === "점심 식사"){
+              pastDiet.value["점심 식사"].push(value);
+            }else if(value["dietCategory"] === "저녁 식사"){
+              pastDiet.value["저녁 식사"].push(value);
+            }else if(value["dietCategory"] === "간식/기타"){
+               pastDiet.value["간식/기타"].push(value);
+            } 
+        }
+    }catch(err){
+      console.error("과거 식사 조회 중 에러가 발생했습니다.",err);
+    }
 
-    alert("유효한 날짜입니다.");
+    isOpen.value = true;
+
 }
 
 const calcDateTime = dayjs();
@@ -307,6 +417,73 @@ const getFoodDetailRequset = async(food)=>{
        cursor: pointer;
        border: none;
        border-radius: 5px;
+    }
+
+    .past-meal-box{
+      background-color: white;
+      width: auto;
+      height: auto;
+      .past-meal-date{
+        text-align: center;
+        font-size:2rem;
+      }
+      .breakfast-box{
+          display: flex;
+          flex-direction: column;
+          .breakfast-text{
+            font-size: 1.5rem;
+          } breakfast-text
+          .breakfast-diet{
+              margin-bottom: 20px;
+            .breakfast-nutrition{
+                        display: flex;
+            }
+          }
+         
+      }
+      .lunch-box{
+         display: flex;
+         flex-direction: column;
+         .lunch-text{
+          font-size: 1.5rem;
+         }
+         .lunch-diet{
+          margin-bottom: 20px;
+            .lunch-nutrition{
+              display: flex;
+             }
+         }
+     
+
+      }
+      .dinner-box{
+          display: flex;
+          flex-direction: column;
+          .dinner-text{
+            font-size: 1.5rem;
+          }
+          .dinner-diet{
+             margin-bottom: 20px;
+            .dinner-nutrition{
+              display: flex;
+            }
+          }
+  
+      }
+      .snack-box{
+          display: flex;
+          flex-direction: column;
+          .snack-text{
+            font-size: 1.5rem;
+          }
+          .snack-diet{
+              margin-bottom: 20px;
+            .snack-nutrition{
+              display: flex;
+              }
+          }
+      
+      }
     }
   }
 
