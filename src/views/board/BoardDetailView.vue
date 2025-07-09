@@ -8,7 +8,7 @@
           <hr class="area-line">
           <div class="board-account">{{ boardDetail.data.writerAccount }}</div>
           <hr class="area-line">
-          <div class="board-content">{{boardDetail.data.content}} {{ backBoardList }}</div>
+          <div class="board-content">{{boardDetail.data.content}}</div>
            <hr class="area-line">  
           <div class =btns>
                 <div class="board-ctr-btns">
