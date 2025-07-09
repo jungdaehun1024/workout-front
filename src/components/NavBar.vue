@@ -2,13 +2,7 @@
     <nav class="navigation">
         <ul class = "nav-menu">
             <li>
-                <RouterLink  class="nav-link" to="/">홈</RouterLink>
-            </li>
-            <li>
-                <RouterLink v-if="isLogin"  class="nav-link" to="/board/write" >글 쓰기 </RouterLink>
-            </li>
-            <li>
-                <RouterLink v-if="isLogin"  class="nav-link" to="/board"  >커뮤니티</RouterLink>
+                <RouterLink  class="nav-link" to="/">Workout</RouterLink>
             </li>
             <li>
                 <RouterLink v-if="!isLogin"  class="nav-link" to="/auth/join"  >회원가입</RouterLink>
@@ -63,11 +57,8 @@ const logout = async()=>{
     }catch(err){
         console.log(err.message);
     }
-   
 }
-
 </script>
-
 <style lang="scss" scoped>
 
 .navigation {
@@ -75,8 +66,9 @@ const logout = async()=>{
     margin: 0px;
     padding: 10px;
     color: #ffffff;
+    border-bottom: solid 1px #ffffff;
     font-size: 3rem;
-    border: none;
+    // border: none;
     gap: 1rem;
     .nav-menu{
           list-style: none;
