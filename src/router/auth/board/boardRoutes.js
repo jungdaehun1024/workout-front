@@ -1,5 +1,4 @@
 import WriteView  from "@/views/board/WriteView.vue";
-import BoardView from  "@/views/board/BoardView.vue";
 import BoardDetailView from "@/views/board/BoardDetailView.vue";
 import { useBoardStore } from "@/stores/board/boardStore";
 import ModifyView from "@/views/board/ModifyView.vue";
@@ -12,12 +11,6 @@ export default [
             meta: { requiresAuth: true },
             component: WriteView,
           
-        },
-        {
-            path: "/board",
-            name:"Board",
-            meta: { requiresAuth: true },
-            component: BoardView,
         },
         {
             path: "/board/detail/:boardId",
