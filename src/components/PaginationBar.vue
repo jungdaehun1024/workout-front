@@ -17,13 +17,14 @@
 </template>
 <script setup>
 // eslint 에러 회피용 (실제로는 사용되지 않음)
-import { defineProps, defineEmits, ref, computed } from 'vue'
+import { defineProps, defineEmits, ref, computed, watch } from 'vue'
 
 const props = defineProps(["totalCount"]);
 const emit = defineEmits(['changePage']);
-const pageSize = 10; // 한 페이지에 보여줄 데이터 수 
+const pageSize = 20; // 한 페이지에 보여줄 데이터 수 
 const pageBtnSize = 5; //한 번에 보여줄 페이지 버튼 수 
-const currnetGroup = ref(0); // 현재 페이지 버튼 그룹 인덱스 
+const currnetGroup = ref(0); // 현재 페이지 버튼 그룹 인덱스
+const paginationTotalIndex = ref(0);
 
 //페이지네이션 버튼 총 인덱스 계산 함수
 const calcPaginationTotalIndex = ((props)=>{
@@ -38,10 +39,10 @@ const calcPaginationTotalIndex = ((props)=>{
     }
 });
 
+watch(props,()=>{
+  paginationTotalIndex.value = calcPaginationTotalIndex(props);
 
-//페이지네이션 인덱스
-const paginationTotalIndex = calcPaginationTotalIndex(props);
-
+})
 
 //클릭하는 페이지네이션 인덱스 반환
 const getClickPaginationIndex = ((page)=>{
@@ -51,14 +52,14 @@ const getClickPaginationIndex = ((page)=>{
 //표시될 페이징 버튼 계산.  ex) |0|1|2|3|4|
 const calcVisiblePaginationIndex = computed(()=>{
   const start = currnetGroup.value * pageBtnSize;
-  const end = Math.min(start+pageBtnSize, paginationTotalIndex);
+  const end = Math.min(start+pageBtnSize, paginationTotalIndex.value);
   return Array.from({ length: end - start }, (_, i) => start + i);
 });
 
 
 //다음 그룹의 첫 번째 인덱스를 계산해서 총 인덱스보다 작으면 > 활성화
 const nextGroup = ()=>{
-  if((currnetGroup.value+1)* pageBtnSize < paginationTotalIndex){
+  if((currnetGroup.value+1)* pageBtnSize < paginationTotalIndex.value){
     currnetGroup.value++;
   }
 };
