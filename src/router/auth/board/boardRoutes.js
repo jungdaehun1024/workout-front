@@ -8,17 +8,15 @@ export default [
     {
             path: "/board/write",
             name:"Write",
-            meta: { requiresAuth: true },
             component: WriteView,
           
         },
         {
-            path: "/board/detail/:boardId",
+            path: "/board/detail",
             name:"BoardDetail",
-            meta: { requiresAuth: true },
             beforeEnter: async(to, from, next) => {
                 const boardStore = useBoardStore();
-                await boardStore.getBoardDetail(to.params.boardId);
+                await boardStore.getBoardDetail(to.query.boardId);
                 next();
             },
             component: BoardDetailView,
@@ -26,7 +24,6 @@ export default [
         {
             path: "/board/modify",
             name:"Modify",
-            meta: { requiresAuth: true },
             component: ModifyView,
         }
 ]
