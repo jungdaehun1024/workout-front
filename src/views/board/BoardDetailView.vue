@@ -6,7 +6,11 @@
           <span class="board-date">{{ boardDetail.data.createdAt }}</span>
           </div>
           <hr class="area-line">
-          <div class="board-account">{{ boardDetail.data.writerAccount }}</div>
+          <div class ="middel-area">
+            <div class="board-account">{{ boardDetail.data.writerAccount }}</div>
+            <div>[탭]{{boardDetail.data.categoryName}}</div>
+          </div>
+
           <hr class="area-line">
           <div class="board-content">{{boardDetail.data.content}}</div>
            <hr class="area-line">  
@@ -50,15 +54,13 @@ onMounted(async()=>{
   const wirterAccount = boardDetail.value.data.writerAccount;
   if(userInfo.value.account === wirterAccount){
     isWriter.value = true;
-    console.log("일치");
   }else{
     isWriter.value=false;
-     console.log("불일치");
   }
 })
 //목록으로 돌아가는 메소드
 const mvBoardList = ()=>{
-    router.push("/board");
+    router.push("/");
 }
 
 //게시글 삭제
@@ -66,9 +68,11 @@ const delBoard = async(boardId)=>{
   const checkDelete = confirm("삭제된 뒤에는 복구할 수 없습니다.");
   if(checkDelete){
     try{
-      await axios.put(`/api/deleteBoard/${boardId}`); 
+      await axios.delete("/api/board",{params:{
+        boardId,
+      }}); 
       alert("삭제가 완료되었습니다.");
-       router.push("/board");
+       router.push("/");
       }catch(err){
          alert("삭제를 실패했습니다.");
       console.error("게시글 삭제 실패"+err.message);
@@ -123,6 +127,10 @@ const downloadFile = (file)=>{
         height: 0.07rem;
         background-color: #ffffff ;
         border: none;
+      }
+      .middel-area{
+        display: flex;
+        justify-content: space-between;
       }
       .board-account{
        font-style: italic;
