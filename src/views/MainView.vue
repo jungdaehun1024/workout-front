@@ -6,11 +6,12 @@
       <table>
          <thead>
             <tr>
-               <th v-for="(header,index) in tableHeaders" :key="index">{{ header }}</th>
+               <th class="table-header-elements" v-for="(header,index) in tableHeaders" :key="index">{{ header }}</th>
             </tr>
          </thead>
          <tbody>
-            <tr class="table-bodies" v-for="body in boards" :key="body.boardId">
+            <tr class="table-bodies" v-for="body in boards" :key="body.boardId" @click="clickBoard(body)">
+               <td class="table-body-elements">{{body.categoryName}}</td>
                <td class="table-body-elements">{{ body.title}}</td>
                <td class="table-body-elements">{{ body.writerAccount}}</td>
                <td class="table-body-elements">{{ body.createdAt }}</td>
@@ -18,7 +19,11 @@
  
          </tbody>
       </table>
-       <PaginationBar :totalCount="boardsCount" @changePage="handleChangePage"/>
+      <div class="btn-box">
+         <button class="write-btn" type="button" @click="writeBoard()">글 작성</button>
+          <PaginationBar :totalCount="boardsCount" @changePage="handleChangePage"/>
+      </div>
+      
    </div> 
    </div>
 </template>
@@ -29,12 +34,20 @@ import { useBoardStore } from '@/stores/board/boardStore';
 import { useCategoryStore } from '@/stores/board/categoryStore';
 import { storeToRefs } from 'pinia';
 import { watch,ref} from 'vue';
+import { useRouter } from 'vue-router';
 const categoryStore = useCategoryStore();
 const boardStore = useBoardStore();
 const {currentCategory} = storeToRefs(categoryStore);
 const {boards,boardsCount} = storeToRefs(boardStore);
 const clickPaginationIndex = ref(0);
-const tableHeaders = ref(["제목","작성자","작성일"]);
+const tableHeaders = ref(["탭","제목","작성자","작성일",]);
+const router = useRouter();
+const clickBoard = async(body)=>{
+   router.push({
+      path: "/board/detail",
+      query: {boardId : body.boardId}
+   });
+}
 
 watch(currentCategory,async (newVal)=>{
    try{
@@ -57,6 +70,17 @@ watch(clickPaginationIndex,async(paginationIndex)=>{
       console.error(err.message);
    }
 })
+
+const writeBoard = ()=>{
+  const isLogin = localStorage.getItem("isLogin");
+  if(isLogin === "false"){
+      alert("로그인 후 이용 가능합니다.");
+      return;
+  }
+
+  router.push("/board/write");
+  
+}
 </script>
 <style scoped> 
    .index-container{
@@ -70,11 +94,16 @@ watch(clickPaginationIndex,async(paginationIndex)=>{
             flex-direction: column;
             width: 100%;
             height: 100%;
+            .table-header-elements{
+               width: 3rem;
+            }
             .table-bodies{
                background-color: rgb(150, 150 , 150);
                .table-body-elements{
                   color: rgb(30, 30, 30);
                   padding-bottom: 1.5rem;
+                  width: 3rem;
+                  border: none;
                }
 
             }
@@ -100,6 +129,20 @@ watch(clickPaginationIndex,async(paginationIndex)=>{
                text-align: center;
                font-size: 5rem;
          }
+         .btn-box{
+            margin-top: 1.5rem;
+            margin-left: 1rem;
+            display: flex;
+            justify-content: space-between;
+            .write-btn{
+               border: none;
+               border-radius: 3px;
+               width: 7rem;
+               height: 3.5rem;
+               margin-top: 2.5rem;
+               
+            }
+         }
 
          }
    }
@@ -107,4 +150,5 @@ watch(clickPaginationIndex,async(paginationIndex)=>{
 table{
    color: #ffffff;
 }
+
 </style>
