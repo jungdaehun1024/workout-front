@@ -1,6 +1,15 @@
 <template >
      <div class="form-container">
         <div class="form-group">
+          <div class="tab-toggle" @click="clickCategoryTab()">탭∇</div> 
+          <div class="current-category">{{currentSelectedCategory.categoryName}}</div>
+          <div class="category-dropdown" v-if="selectCategoryToggle">
+            <div class="category-dropdown-list" @click="clickCategory(category)" v-for="(category,index) in creatableCategories" :key="index" >{{ category.categoryName }}||</div>
+          </div>
+             
+          
+        </div>
+        <div class="form-group">
           <label class="label-title" for="title">글 제목</label>
           <input type="text" v-model="title" id="title" class="input-title"  />
         </div>
@@ -37,7 +46,6 @@
 </template>
 <script setup>
  import { onMounted, onUnmounted, ref } from 'vue';
-    import axios from 'axios';
     import { onBeforeRouteLeave, useRouter } from 'vue-router';
     import { useBoardStore } from '@/stores/board/boardStore';
     import { storeToRefs } from 'pinia';
@@ -51,19 +59,24 @@
 
     const router = useRouter();
     const boardStore = useBoardStore();
-    const {boardDetail} = storeToRefs(boardStore);
+    const {boardDetail,creatableCategories} = storeToRefs(boardStore);
     const isSafeToLeave = ref(false); // 이동 허용 여부
-
+    const currentSelectedCategory = ref({});
+    const selectCategoryToggle = ref(false);
     //Session스토리지에 담긴 게시글 상세 정보가 있다->게시글 수정 (새로고침 해도 값 유지)
     //                                       없다.->게시글 생성 (빈 문자열)
-    onMounted(()=>{
+    onMounted(async()=>{
         const getSession = JSON.parse(sessionStorage.getItem("boardDetail"));
         const getBoardDetail = getSession?._value?.data;
+        await boardStore.getCreatableCategories();
         window.addEventListener("beforeunload",handleBeforeUnload);
         if(getBoardDetail){
             title.value = getBoardDetail?.title ;
-            content.value = getBoardDetail?.content ;
-
+            content.value = getBoardDetail?.content;
+            currentSelectedCategory.value = {
+                categoryId : getBoardDetail?.categoryId,
+                categoryName : getBoardDetail?.categoryName
+            }
             //게시글 생성할 때 저장됐던 파일의 정보
             existFiles.value = getBoardDetail?.attachments.map((item)=>({
               attachmentId : item.attachmentId,
@@ -77,6 +90,8 @@
             content.value = "";
         }
     });
+
+
     onUnmounted(()=>{
       window.removeEventListener("beforeunload",handleBeforeUnload);
     })
@@ -101,21 +116,32 @@
     //게시글 생성
     const createBoard = async() =>{
         try {
+             if(!currentSelectedCategory.value || Object.keys(currentSelectedCategory.value).length === 0){
+                alert("카테고리 정보를 선택해주세요");
+                return;
+             }
+             if(!title.value.trim()){
+               alert("게시글 제목은 필수 입력입니다.");
+               return;
+             }
+             if(!content.value.trim()){
+               alert("게시글 본문은 필수 입력입니다.");
+               return;
+             }
              const formData = new FormData();
              formData.append("title",title.value);
              formData.append("content",content.value);
+             formData.append("categoryId",currentSelectedCategory.value.categoryId);
              files.value.forEach((file)=>{
                 formData.append("attachmentFiles",file);
              })
-             await axios.post("/api/createBoard",formData,{
-              headers:{
-                "Content-Type" : "multipart/form-data",
-              },
-              withCredentials:true
-             });
-
-             alert("게시글이 작성에 성공했습니다.");
-            router.push("/board");
+             const response = await boardStore.postBoard(formData);
+             if(response.data.status !== 201){
+                alert("게시글 작성에 실패했습니다.");
+                router.push("/");
+             }
+            alert("게시글이 작성에 성공했습니다.");
+            router.push("/");
         } catch (err) {
             console.error(err.message);
           }
@@ -128,24 +154,24 @@
             formData.append("boardId",boardDetail.value.data.boardId);
             formData.append("title",title.value);
             formData.append("content",content.value);
+            formData.append("categoryId",currentSelectedCategory.value.categoryId);
             formData.append("deleteAttachmentsList",JSON.stringify(deleteReqFiles.value));
             files.value.forEach((file)=>{
                 formData.append("attachmentFiles",file);
              });
 
-            await axios.put(`/api/updateBoard`,formData,{
-              headers:{
-                "Content-Type" : "multipart/form-data",
-              },
-              withCredentials:true,
-            });
+            const response = await boardStore.putBoard(formData);
+            if(response.data.status !== 200){
+              alert("수정 중 에러가 발생했습니다.");
+              router.push("/");
+            }
             sessionStorage.clear(); // 수정 완료되면 세션 비우기
             
             // 기존 boardDetail 객체를 유지하면서 내부 값만 초기화
             //  (수정 중 게시글 생성 페이지로 넘어가면 기록이 남기때문)
             Object.assign(boardDetail.value, { data: {} });
              alert("게시글이 수정에 성공했습니다.");
-            router.push("/board");
+            router.push("/");
         }catch(err){
             console.error(err.message);
         }
@@ -166,7 +192,7 @@
         const checkCancel = confirm("수정을 취소하시겠습니까?");
         if(checkCancel){
           isSafeToLeave.value = true;
-          router.push("/board");
+          router.push("/");
         }
     }
 
@@ -198,6 +224,17 @@
       console.log(deleteReqFiles.value);
 
     }
+
+    //드롭다운 토글
+    const clickCategoryTab = ()=>{
+        selectCategoryToggle.value = !selectCategoryToggle.value;
+    }
+
+    //카테고리 선택
+    const clickCategory = (category)=>{
+      currentSelectedCategory.value = category;
+      selectCategoryToggle.value = !selectCategoryToggle.value
+    }
 </script>
 <style lang="scss" scoped>
  .form-container{
@@ -214,11 +251,24 @@
   .form-group{   
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
     background-color: #0e0e0e;
     height:auto;
     width: 80vw;
-      margin-bottom: 0; /* 아래쪽 간격 조절 */
+     .tab-toggle{
+      margin-top: 1rem;
+     }
+     .current-category{
+       margin-top: 1rem;
+     }
+     .category-dropdown{
+      
+       display: flex;
+      
+        .category-dropdown-list{
+          font-size: 2rem;
+          // color: red;
+        }
+      }
      .label-title{
       font-size: 3rem;
       margin-bottom: 1rem;
